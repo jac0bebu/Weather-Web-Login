@@ -1,0 +1,26 @@
+{
+    "admin@weather.com": {
+        "password": "$2b$12$nrRk43Gp9LqP1lraGldbY.RvjM5rqtuAQ8MTrijFErmXcFuAfPuA6",
+        "role": "admin",
+        "username": "Admin",
+        "full_name": "Weather Admin"
+    },
+    "10422060@student.vgu.edu.vn": {
+        "password": "$2b$12$5/X9MgQwuvagy6l5ZZeRvON3JL7t28NCnTj888THwb9DnYWPvNJka",
+        "role": "reporter",
+        "username": "",
+        "full_name": ""
+    },
+    "toibingu@coor.com": {
+        "password": "$2b$12$Axv6MKOXO.YUg4uLkwDAlugPVf5ZkFW.picPeh8uZGa129/cEsqxC",
+        "role": "coordinator",
+        "username": "",
+        "full_name": ""
+    },
+    "abcd": {
+        "password": "$2b$12$NgSbA6RkbhM8dWbSWr3fpeC3g9R6oPXsBVcfAlLq0oRLeyqEGfwAO",
+        "role": "reporter",
+        "username": "",
+        "full_name": ""
+    }
+}

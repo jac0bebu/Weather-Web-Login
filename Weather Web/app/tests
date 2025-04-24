@@ -1,0 +1,101 @@
+import streamlit as st
+from app.users import load_users, save_users, hash_password
+
+def admin_panel():
+    """Admin panel with user management"""
+    st.markdown("👥 Create New User")
+    
+    with st.form("create_user", clear_on_submit=True):
+        col1, col2 = st.columns(2)
+        with col1:
+            email = st.text_input("Email Address", placeholder="user@example.com")
+        with col2:
+            password = st.text_input("Password", type="password", placeholder="Enter secure password")
+        
+        role = st.selectbox("Select Role", 
+                           ["reporter", "coordinator"],
+                           format_func=lambda x: x.capitalize())
+        
+        col1, col2, col3 = st.columns([1, 1, 1])
+        with col2:
+            submit_button = st.form_submit_button("Create Account", use_container_width=True)
+        
+        if submit_button:
+            if not email or not password:
+                st.error("Please fill in all fields!")
+                return
+                
+            users = load_users()
+            if email in users:
+                st.error("User already exists!")
+                return
+                
+            users[email] = {
+                "password": hash_password(password),
+                "role": role,
+                "username": "",
+                "full_name": ""
+            }
+            save_users(users)
+            st.success(f"✅ New {role.capitalize()} account created successfully!")
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    # User Management Section
+    st.markdown("📊 User Management")
+    
+    users = load_users()
+    
+    # Create tabs for different roles
+    tabs = st.tabs(["📝 Reporters", "👥 Coordinators"])
+    
+    def render_user_card(email, data):
+        st.markdown("""
+            <div style="
+                background-color: var(--card-bg);
+                padding: 1rem;
+                border-radius: 0.5rem;
+                border: 1px solid var(--border-color);
+                margin-bottom: 1rem;
+            ">
+        """, unsafe_allow_html=True)
+        
+        col1, col2, col3, col4 = st.columns([3, 2, 2, 1])
+        with col1:
+            st.markdown(f"**📧 {email}**")
+        with col2:
+            st.markdown(f"**👤 {data['full_name'] or data['username'] or 'Not set'}**")
+        with col3:
+            st.markdown(f"**🏷️ {data['role'].capitalize()}**")
+        with col4:
+            if st.button("🗑️", key=f"del_{email}", help="Delete user"):
+                if email != "admin@weather.com":
+                    del users[email]
+                    save_users(users)
+                    st.rerun()
+                else:
+                    st.error("Cannot delete admin account!")
+        
+        st.markdown("</div>", unsafe_allow_html=True)
+    
+    with tabs[0]:
+        reporters = {email: data for email, data in users.items() 
+                    if data["role"] == "reporter"}
+        
+        if reporters:
+            for email, data in reporters.items():
+                render_user_card(email, data)
+        else:
+            st.info("🔍 No reporter accounts found")
+
+    with tabs[1]:
+        coordinators = {email: data for email, data in users.items() 
+                       if data["role"] == "coordinator"}
+        
+        if coordinators:
+            for email, data in coordinators.items():
+                render_user_card(email, data)
+        else:
+            st.info("🔍 No coordinator accounts found")
+
+    st.markdown("</div></div>", unsafe_allow_html=True)
